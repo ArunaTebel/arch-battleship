@@ -1,0 +1,23 @@
+{
+  "name": "arch-battleship",
+  "version": "1.0.0",
+  "description": "archeun battleship serverless functions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArunaTebel/arch-battleship.git"
+  },
+  "author": "arunatebel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArunaTebel/arch-battleship/issues"
+  },
+  "homepage": "https://github.com/ArunaTebel/arch-battleship#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "mongodb": "^4.10.0"
+  }
+}
