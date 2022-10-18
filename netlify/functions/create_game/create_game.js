@@ -1,21 +1,44 @@
-const {MongoClient} = require("mongodb");
-
-const mongoClient = new MongoClient(process.env.MONGODB_URI);
-
-const clientPromise = mongoClient.connect();
+const {restrictEventByHttpMethod, throwError} = require("../../utils/function");
+const {createNewGame} = require("../../utils/game");
 
 const handler = async (event) => {
     try {
-        const database = (await clientPromise).db(process.env.MONGODB_DATABASE);
-        const collection = database.collection(process.env.MONGODB_COLLECTION);
-        const results = await collection.find({}).limit(10).toArray();
+        restrictEventByHttpMethod(event, 'POST')
+
+        const gameData = validateGameData(JSON.parse(event.body));
+        const game = await createNewGame(gameData)
+
         return {
             statusCode: 200,
-            body: JSON.stringify(results),
+            body: JSON.stringify({
+                message: 'Successfully created a new game',
+                game: game
+            }),
         }
     } catch (error) {
-        return {statusCode: 500, body: error.toString()}
+        return {
+            statusCode: error.code ?? 500,
+            body: error.message
+        }
     }
+}
+
+const validateGameData = (gameData) => {
+    const errors = {};
+
+    if (!gameData.name) {
+        errors['name'] = `Required`;
+    }
+    if (!gameData.ownerName) {
+        errors['ownerName'] = `ownerName`;
+    }
+
+    if (Object.keys(errors).length > 0) {
+        throwError(JSON.stringify({
+            fieldErrors: errors
+        }), '400')
+    }
+    return gameData;
 }
 
 module.exports = {handler}
